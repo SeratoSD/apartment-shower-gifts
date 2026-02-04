@@ -67,4 +67,22 @@ function deletePresent(id) {
   return deleted;
 }
 
-module.exports = { getPresents, getPresentById, markAsBought, addPresent, deletePresent };
+function updatePresent(id, updates) {
+  const presents = loadPresents();
+  const index = presents.findIndex(p => p.id === id);
+  if (index === -1) return null;
+  
+  presents[index] = {
+    ...presents[index],
+    name: updates.name || presents[index].name,
+    description: updates.description ?? presents[index].description,
+    price: updates.price ? parseFloat(updates.price) : presents[index].price,
+    photo: updates.photo ?? presents[index].photo,
+    url: updates.url ?? presents[index].url
+  };
+  
+  savePresents(presents);
+  return presents[index];
+}
+
+module.exports = { getPresents, getPresentById, markAsBought, addPresent, deletePresent, updatePresent };

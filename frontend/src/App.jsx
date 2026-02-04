@@ -14,8 +14,9 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newGift, setNewGift] = useState({ name: '', description: '', price: '', photo: '', url: '' });
+  const [showGiftForm, setShowGiftForm] = useState(false);
+  const [editingGift, setEditingGift] = useState(null);
+  const [giftForm, setGiftForm] = useState({ name: '', description: '', price: '', photo: '', url: '' });
 
   useEffect(() => {
     fetchPresents();
@@ -84,22 +85,43 @@ function App() {
     setIsAdmin(false);
   }
 
-  async function handleAddGift(e) {
+  function openAddForm() {
+    setEditingGift(null);
+    setGiftForm({ name: '', description: '', price: '', photo: '', url: '' });
+    setShowGiftForm(true);
+  }
+
+  function openEditForm(present) {
+    setEditingGift(present);
+    setGiftForm({
+      name: present.name,
+      description: present.description || '',
+      price: String(present.price),
+      photo: present.photo || '',
+      url: present.url || ''
+    });
+    setShowGiftForm(true);
+  }
+
+  async function handleSubmitGift(e) {
     e.preventDefault();
     const password = sessionStorage.getItem('adminPassword');
+    const isEditing = !!editingGift;
+    
     try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
+      const res = await fetch(isEditing ? `${API_URL}/${editingGift.id}` : API_URL, {
+        method: isEditing ? 'PUT' : 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'x-admin-password': password
         },
-        body: JSON.stringify(newGift)
+        body: JSON.stringify(giftForm)
       });
-      if (!res.ok) throw new Error('Failed to add gift');
+      if (!res.ok) throw new Error(`Failed to ${isEditing ? 'update' : 'add'} gift`);
       await fetchPresents();
-      setShowAddForm(false);
-      setNewGift({ name: '', description: '', price: '', photo: '', url: '' });
+      setShowGiftForm(false);
+      setEditingGift(null);
+      setGiftForm({ name: '', description: '', price: '', photo: '', url: '' });
     } catch (err) {
       alert(err.message);
     }
@@ -137,7 +159,7 @@ function App() {
 
       {isAdmin && (
         <div className="admin-bar">
-          <button className="btn btn-primary" onClick={() => setShowAddForm(true)}>+ Add Gift</button>
+          <button className="btn btn-primary" onClick={openAddForm}>+ Add Gift</button>
           <button className="btn btn-secondary" onClick={handleLogout}>Logout</button>
         </div>
       )}
@@ -165,7 +187,10 @@ function App() {
               )}
               
               {isAdmin && (
-                <button className="btn-delete" onClick={() => handleDelete(present.id)}>🗑 Delete</button>
+                <div className="admin-actions">
+                  <button className="btn-edit" onClick={() => openEditForm(present)}>✏️ Edit</button>
+                  <button className="btn-delete" onClick={() => handleDelete(present.id)}>🗑 Delete</button>
+                </div>
               )}
             </div>
           </div>
@@ -215,25 +240,25 @@ function App() {
         </div>
       )}
 
-      {/* Add Gift Modal */}
-      {showAddForm && (
-        <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
+      {/* Add/Edit Gift Modal */}
+      {showGiftForm && (
+        <div className="modal-overlay" onClick={() => setShowGiftForm(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <h2>Add New Gift</h2>
-            <form onSubmit={handleAddGift}>
-              <input type="text" placeholder="Gift name *" value={newGift.name} 
-                onChange={e => setNewGift({...newGift, name: e.target.value})} required />
-              <input type="text" placeholder="Description" value={newGift.description}
-                onChange={e => setNewGift({...newGift, description: e.target.value})} />
-              <input type="number" step="0.01" placeholder="Price *" value={newGift.price}
-                onChange={e => setNewGift({...newGift, price: e.target.value})} required />
-              <input type="url" placeholder="Photo URL" value={newGift.photo}
-                onChange={e => setNewGift({...newGift, photo: e.target.value})} />
-              <input type="url" placeholder="Buy URL" value={newGift.url}
-                onChange={e => setNewGift({...newGift, url: e.target.value})} />
+            <h2>{editingGift ? 'Edit Gift' : 'Add New Gift'}</h2>
+            <form onSubmit={handleSubmitGift}>
+              <input type="text" placeholder="Gift name *" value={giftForm.name} 
+                onChange={e => setGiftForm({...giftForm, name: e.target.value})} required />
+              <input type="text" placeholder="Description" value={giftForm.description}
+                onChange={e => setGiftForm({...giftForm, description: e.target.value})} />
+              <input type="number" step="0.01" placeholder="Price *" value={giftForm.price}
+                onChange={e => setGiftForm({...giftForm, price: e.target.value})} required />
+              <input type="url" placeholder="Photo URL" value={giftForm.photo}
+                onChange={e => setGiftForm({...giftForm, photo: e.target.value})} />
+              <input type="url" placeholder="Buy URL" value={giftForm.url}
+                onChange={e => setGiftForm({...giftForm, url: e.target.value})} />
               <div className="modal-actions">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowAddForm(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary">Add Gift</button>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowGiftForm(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">{editingGift ? 'Save Changes' : 'Add Gift'}</button>
               </div>
             </form>
           </div>

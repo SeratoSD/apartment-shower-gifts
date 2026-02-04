@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getPresents, getPresentById, markAsBought, addPresent, deletePresent } = require('../data/presentsStore');
+const { getPresents, getPresentById, markAsBought, addPresent, deletePresent, updatePresent } = require('../data/presentsStore');
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 
@@ -52,6 +52,16 @@ router.post('/', requireAdmin, (req, res) => {
   }
   const present = addPresent({ name, description, price, photo, url });
   res.status(201).json(present);
+});
+
+// Admin: Update present
+router.put('/:id', requireAdmin, (req, res) => {
+  const { name, description, price, photo, url } = req.body;
+  const present = updatePresent(req.params.id, { name, description, price, photo, url });
+  if (!present) {
+    return res.status(404).json({ error: 'Present not found' });
+  }
+  res.json(present);
 });
 
 // Admin: Delete present

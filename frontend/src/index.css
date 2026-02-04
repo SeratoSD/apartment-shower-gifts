@@ -62,14 +62,34 @@ body {
   margin-bottom: 16px;
 }
 
-.btn-delete {
+.admin-actions {
+  display: flex;
+  gap: 8px;
   margin-top: 12px;
+}
+
+.btn-edit {
+  flex: 1;
+  background: none;
+  border: 1px solid #667eea;
+  color: #667eea;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.btn-edit:hover {
+  background: #f0f0ff;
+}
+
+.btn-delete {
+  flex: 1;
   background: none;
   border: 1px solid #e53935;
   color: #e53935;
   padding: 8px;
   border-radius: 6px;
-  width: 100%;
   cursor: pointer;
   font-size: 0.85rem;
 }
