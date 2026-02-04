@@ -179,7 +179,7 @@ function App() {
                 <div className="present-actions">
                   {!isAdmin && (
                     <button className="btn btn-primary" onClick={() => setBuyModal(present)}>
-                      Lo Compro Yo
+                      Lo Compro!
                     </button>
                   )}
                   <a href={present.url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
