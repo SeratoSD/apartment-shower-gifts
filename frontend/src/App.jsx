@@ -73,10 +73,10 @@ function App() {
         setShowAdminLogin(false);
         setAdminPassword('');
       } else {
-        alert('Invalid password');
+        alert('Contraseña incorrecta');
       }
     } catch (err) {
-      alert('Login failed');
+      alert('Error al iniciar sesión');
     }
   }
 
@@ -128,7 +128,7 @@ function App() {
   }
 
   async function handleDelete(id) {
-    if (!confirm('Delete this gift?')) return;
+    if (!confirm('¿Eliminar este regalo?')) return;
     const password = sessionStorage.getItem('adminPassword');
     try {
       const res = await fetch(`${API_URL}/${id}`, {
@@ -142,16 +142,16 @@ function App() {
     }
   }
 
-  if (loading) return <div className="app"><div className="loading">Loading gifts...</div></div>;
+  if (loading) return <div className="app"><div className="loading">Cargando regalos...</div></div>;
   if (error) return <div className="app"><div className="error">Error: {error}</div></div>;
 
   return (
     <div className="app">
       <header className="header">
-        <h1>🎁 Apartment Shower</h1>
-        <p>Gift Registry</p>
+        <h1>🎁 Lluvia de Apartamento</h1>
+        <p>Lista de Regalos</p>
         {isAdmin ? (
-          <div className="admin-badge">Admin Mode</div>
+          <div className="admin-badge">Modo Admin</div>
         ) : (
           <button className="admin-link" onClick={() => setShowAdminLogin(true)}>Admin</button>
         )}
@@ -159,8 +159,8 @@ function App() {
 
       {isAdmin && (
         <div className="admin-bar">
-          <button className="btn btn-primary" onClick={openAddForm}>+ Add Gift</button>
-          <button className="btn btn-secondary" onClick={handleLogout}>Logout</button>
+          <button className="btn btn-primary" onClick={openAddForm}>+ Agregar Regalo</button>
+          <button className="btn btn-secondary" onClick={handleLogout}>Salir</button>
         </div>
       )}
 
@@ -174,22 +174,24 @@ function App() {
               <p className="present-price">${present.price.toFixed(2)}</p>
               
               {present.bought ? (
-                <div className="bought-badge">✓ Bought by {present.buyerName}</div>
+                <div className="bought-badge">✓ Comprado por {present.buyerName}</div>
               ) : (
                 <div className="present-actions">
-                  <button className="btn btn-primary" onClick={() => setBuyModal(present)}>
-                    I'll Buy This
-                  </button>
+                  {!isAdmin && (
+                    <button className="btn btn-primary" onClick={() => setBuyModal(present)}>
+                      Lo Compro Yo
+                    </button>
+                  )}
                   <a href={present.url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
-                    View
+                    Ver
                   </a>
                 </div>
               )}
               
               {isAdmin && (
                 <div className="admin-actions">
-                  <button className="btn-edit" onClick={() => openEditForm(present)}>✏️ Edit</button>
-                  <button className="btn-delete" onClick={() => handleDelete(present.id)}>🗑 Delete</button>
+                  <button className="btn-edit" onClick={() => openEditForm(present)}>✏️ Editar</button>
+                  <button className="btn-delete" onClick={() => handleDelete(present.id)}>🗑 Eliminar</button>
                 </div>
               )}
             </div>
@@ -201,18 +203,18 @@ function App() {
       {buyModal && (
         <div className="modal-overlay" onClick={() => setBuyModal(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <h2>Buying: {buyModal.name}</h2>
+            <h2>Comprando: {buyModal.name}</h2>
             <input
               type="text"
-              placeholder="Your name"
+              placeholder="Tu nombre"
               value={buyerName}
               onChange={e => setBuyerName(e.target.value)}
               autoFocus
             />
             <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={() => setBuyModal(null)}>Cancel</button>
+              <button className="btn btn-secondary" onClick={() => setBuyModal(null)}>Cancelar</button>
               <button className="btn btn-primary" onClick={handleBuy} disabled={buying || !buyerName.trim()}>
-                {buying ? 'Saving...' : 'Confirm'}
+                {buying ? 'Guardando...' : 'Confirmar'}
               </button>
             </div>
           </div>
@@ -223,18 +225,18 @@ function App() {
       {showAdminLogin && (
         <div className="modal-overlay" onClick={() => setShowAdminLogin(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <h2>Admin Login</h2>
+            <h2>Acceso Admin</h2>
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Contraseña"
               value={adminPassword}
               onChange={e => setAdminPassword(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleAdminLogin()}
               autoFocus
             />
             <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={() => setShowAdminLogin(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={handleAdminLogin}>Login</button>
+              <button className="btn btn-secondary" onClick={() => setShowAdminLogin(false)}>Cancelar</button>
+              <button className="btn btn-primary" onClick={handleAdminLogin}>Entrar</button>
             </div>
           </div>
         </div>
@@ -244,21 +246,21 @@ function App() {
       {showGiftForm && (
         <div className="modal-overlay" onClick={() => setShowGiftForm(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <h2>{editingGift ? 'Edit Gift' : 'Add New Gift'}</h2>
+            <h2>{editingGift ? 'Editar Regalo' : 'Agregar Nuevo Regalo'}</h2>
             <form onSubmit={handleSubmitGift}>
-              <input type="text" placeholder="Gift name *" value={giftForm.name} 
+              <input type="text" placeholder="Nombre del regalo *" value={giftForm.name} 
                 onChange={e => setGiftForm({...giftForm, name: e.target.value})} required />
-              <input type="text" placeholder="Description" value={giftForm.description}
+              <input type="text" placeholder="Descripción" value={giftForm.description}
                 onChange={e => setGiftForm({...giftForm, description: e.target.value})} />
-              <input type="number" step="0.01" placeholder="Price *" value={giftForm.price}
+              <input type="number" step="0.01" placeholder="Precio *" value={giftForm.price}
                 onChange={e => setGiftForm({...giftForm, price: e.target.value})} required />
-              <input type="url" placeholder="Photo URL" value={giftForm.photo}
+              <input type="url" placeholder="URL de la foto" value={giftForm.photo}
                 onChange={e => setGiftForm({...giftForm, photo: e.target.value})} />
-              <input type="url" placeholder="Buy URL" value={giftForm.url}
+              <input type="url" placeholder="URL para comprar" value={giftForm.url}
                 onChange={e => setGiftForm({...giftForm, url: e.target.value})} />
               <div className="modal-actions">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowGiftForm(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary">{editingGift ? 'Save Changes' : 'Add Gift'}</button>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowGiftForm(false)}>Cancelar</button>
+                <button type="submit" className="btn btn-primary">{editingGift ? 'Guardar Cambios' : 'Agregar Regalo'}</button>
               </div>
             </form>
           </div>
