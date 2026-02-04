@@ -314,7 +314,7 @@ body {
 }
 
 .welcome-text {
-  background: linear-gradient(rgba(255,255,255,0.45), rgba(255,255,255,0.55)), url('/fondo.png');
+  background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.4)), url('/fondo.png');
   background-size: cover;
   background-position: center 70%;
   padding: 28px 24px;
@@ -322,7 +322,7 @@ body {
   margin-bottom: 20px;
   font-size: 0.95rem;
   line-height: 1.8;
-  color: #444;
+  color: white;
   text-align: center;
   box-shadow: 0 4px 16px rgba(0,0,0,0.1);
   border: 1px solid rgba(102, 126, 234, 0.2);
@@ -339,6 +339,6 @@ body {
 
 .welcome-highlight {
   font-weight: 600;
-  color: #667eea;
+  color: #a8d4ff;
   font-style: normal;
 }
