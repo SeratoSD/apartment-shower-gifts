@@ -314,13 +314,16 @@ body {
 }
 
 .welcome-text {
-  background: white;
-  padding: 16px;
-  border-radius: 12px;
+  background: linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.9)), url('/fondo.png');
+  background-size: cover;
+  background-position: center;
+  padding: 24px 20px;
+  border-radius: 16px;
   margin-bottom: 20px;
   font-size: 0.9rem;
   line-height: 1.6;
-  color: #444;
+  color: #333;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  border: 1px solid rgba(102, 126, 234, 0.2);
 }
