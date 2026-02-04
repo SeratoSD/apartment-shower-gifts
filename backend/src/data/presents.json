@@ -1,0 +1,31 @@
+[
+  {
+    "id": "1",
+    "name": "Licuadora",
+    "description": "Licuadora IMUSA Infiny Force XL 10 Velocidades Vaso de Vidrio Negra",
+    "price": 140,
+    "photo": "https://d32iut21qthkdz.cloudfront.net/images/media/B73DC9BC-47E9-4EF4-8396628AA25E6602/?w=800&h=800",
+    "url": "https://www.imusa.com.co/licuadora-imusa-infiny-force-xl-10-velocidades-gris/p",
+    "bought": false
+  },
+  {
+    "id": "3",
+    "name": "Kitchen Scale",
+    "description": "Digital kitchen scale with LCD display",
+    "price": 24.99,
+    "photo": "https://via.placeholder.com/300x200?text=Kitchen+Scale",
+    "url": "https://example.com/kitchen-scale",
+    "bought": true,
+    "buyerName": "Jane Doe",
+    "boughtAt": "2026-01-15T10:30:00.000Z"
+  },
+  {
+    "id": "1770224835887",
+    "name": "Florero",
+    "description": "Florero decorativo blanco, set home, etc etc",
+    "price": 30,
+    "photo": "https://tugocolombia.vtexassets.com/arquivos/ids/313397-1200-auto?v=638815567897630000&width=1200&height=auto&aspect=true",
+    "url": "https://www.tugo.co/florero-decorativo-voro/p",
+    "bought": false
+  }
+]
