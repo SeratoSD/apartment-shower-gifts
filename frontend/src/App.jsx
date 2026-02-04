@@ -148,7 +148,7 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>🎁 Lluvia de Apartamento</h1>
+        <h1>🎁 Apartment Shower</h1>
         <p>Lista de Regalos</p>
         {isAdmin ? (
           <div className="admin-badge">Modo Admin</div>
