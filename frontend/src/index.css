@@ -312,3 +312,15 @@ body {
   padding: 40px;
   color: #e53935;
 }
+
+.welcome-text {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #444;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
