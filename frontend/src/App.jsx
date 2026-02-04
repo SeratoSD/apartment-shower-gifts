@@ -158,10 +158,11 @@ function App() {
       </header>
 
       <p className="welcome-text">
-        Hey! Si estás aquí es porque te queremos mucho y queremos que seas parte de nuestra nueva casita. 
+        <span className="welcome-emoji">🏠💕</span>
+        <span className="welcome-highlight">Hey!</span> Si estás aquí es porque te queremos mucho y queremos que seas parte de nuestra nueva casita. 
         Abajo encontrarás some presents que nos harán muy felices y que usaremos todos los días en nuestro nuevo hogar. 
-        Echa un ojito, siéntete como en casa y escoge el que prefieras. <b>Recuerda marcar como comprado el ítem que elegiste (así los demás lo sabrán).</b>
-        Gracias por tomarte el tiempo de estar aquí, nos vemos en el 12/34/5678 :)
+        Echa un ojito, siéntete como en casa y escoge el que prefieras. <span className="welcome-highlight">Recuerda marcar como comprado</span> el ítem que elegiste (así los demás lo sabrán).
+        Gracias por tomarte el tiempo de estar aquí, <span className="welcome-highlight">nos vemos en el 12/34/5678</span> :)
       </p>
 
       {isAdmin && (
