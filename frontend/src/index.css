@@ -314,9 +314,9 @@ body {
 }
 
 .welcome-text {
-  background: linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.9)), url('/fondo.png');
+  background: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.7)), url('/fondo.png');
   background-size: cover;
-  background-position: center;
+  background-position: center top;
   padding: 24px 20px;
   border-radius: 16px;
   margin-bottom: 20px;
