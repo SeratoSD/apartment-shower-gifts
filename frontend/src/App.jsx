@@ -158,7 +158,10 @@ function App() {
       </header>
 
       <p className="welcome-text">
-        Hey! Si estás aquí es porque te queremos mucho y queremos que seas parte de nuestra nueva casita. Abajo encontrarás detallitos que nos harán muy felices y que usaremos todos los días en nuestro nuevo hogar. Pásale, sientete como en casa y escoge el que prefieras. Recuerda marcar como comprado el ítem que elegiste (así los demás lo sabrán). Gracias por tomarte el tiempo de estar aquí, nos vemos en el 12/34/5678 :)
+        Hey! Si estás aquí es porque te queremos mucho y queremos que seas parte de nuestra nueva casita. 
+        Abajo encontrarás some presents que nos harán muy felices y que usaremos todos los días en nuestro nuevo hogar. 
+        Echa un ojito, siéntete como en casa y escoge el que prefieras. <b>Recuerda marcar como comprado el ítem que elegiste (así los demás lo sabrán).</b>
+        Gracias por tomarte el tiempo de estar aquí, nos vemos en el 12/34/5678 :)
       </p>
 
       {isAdmin && (
