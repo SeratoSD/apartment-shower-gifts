@@ -134,6 +134,7 @@ function App() {
   function handleLogout() {
     sessionStorage.removeItem('adminPassword');
     setIsAdmin(false);
+    fetchPresents();
   }
 
   function openAddForm() {
