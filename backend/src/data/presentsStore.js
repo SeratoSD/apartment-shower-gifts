@@ -1,4 +1,18 @@
 const Present = require('../models/Present');
+const Settings = require('../models/Settings');
+
+async function getSiteVisible() {
+  const setting = await Settings.findOne({ key: 'siteVisible' });
+  return setting ? setting.value : true;
+}
+
+async function setSiteVisible(visible) {
+  return Settings.findOneAndUpdate(
+    { key: 'siteVisible' },
+    { value: visible },
+    { upsert: true, new: true }
+  );
+}
 
 async function getPresents() {
   return Present.find().sort({ createdAt: -1 });
@@ -58,4 +72,4 @@ async function updatePresent(id, updates) {
   }, { new: true });
 }
 
-module.exports = { getPresents, getPresentById, markAsBought, addPresent, deletePresent, releasePresent, updatePresent };
+module.exports = { getPresents, getPresentById, markAsBought, addPresent, deletePresent, releasePresent, updatePresent, getSiteVisible, setSiteVisible };

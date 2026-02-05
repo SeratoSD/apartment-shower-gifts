@@ -223,6 +223,15 @@ body {
   background: #e0e0e0;
 }
 
+.btn-warning {
+  background: #ff9800;
+  color: white;
+}
+
+.btn-warning:hover {
+  background: #f57c00;
+}
+
 .bought-badge {
   background: linear-gradient(135deg, #4caf50, #45a049);
   color: white;
@@ -331,6 +340,26 @@ body {
   text-align: center;
   padding: 40px;
   color: #e53935;
+}
+
+.hidden-message {
+  background: white;
+  border-radius: 16px;
+  padding: 40px 24px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.hidden-message span {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.hidden-message p {
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.6;
 }
 
 .welcome-text {

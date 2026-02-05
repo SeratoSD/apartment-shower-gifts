@@ -17,23 +17,72 @@ function App() {
   const [showGiftForm, setShowGiftForm] = useState(false);
   const [editingGift, setEditingGift] = useState(null);
   const [giftForm, setGiftForm] = useState({ name: '', description: '', price: '', photo: '', url: '' });
+  const [siteHidden, setSiteHidden] = useState(false);
+  const [siteVisible, setSiteVisible] = useState(true);
 
   useEffect(() => {
     fetchPresents();
     const savedAdmin = sessionStorage.getItem('adminPassword');
-    if (savedAdmin) setIsAdmin(true);
+    if (savedAdmin) {
+      setIsAdmin(true);
+      fetchVisibility();
+    }
   }, []);
 
   async function fetchPresents() {
     try {
-      const res = await fetch(API_URL);
+      const password = sessionStorage.getItem('adminPassword');
+      const headers = password ? { 'x-admin-password': password } : {};
+      const res = await fetch(API_URL, { headers });
       if (!res.ok) throw new Error('Failed to fetch presents');
       const data = await res.json();
-      setPresents(data);
+      
+      if (data.hidden) {
+        setSiteHidden(true);
+        setPresents([]);
+      } else {
+        setSiteHidden(false);
+        setPresents(data.presents);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchVisibility() {
+    const password = sessionStorage.getItem('adminPassword');
+    if (!password) return;
+    try {
+      const res = await fetch(`${API_URL}/admin/visibility`, {
+        headers: { 'x-admin-password': password }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSiteVisible(data.visible);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function toggleVisibility() {
+    const password = sessionStorage.getItem('adminPassword');
+    try {
+      const res = await fetch(`${API_URL}/admin/visibility`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-admin-password': password 
+        },
+        body: JSON.stringify({ visible: !siteVisible })
+      });
+      if (res.ok) {
+        setSiteVisible(!siteVisible);
+      }
+    } catch (err) {
+      alert(err.message);
     }
   }
 
@@ -72,6 +121,8 @@ function App() {
         setIsAdmin(true);
         setShowAdminLogin(false);
         setAdminPassword('');
+        fetchPresents();
+        fetchVisibility();
       } else {
         alert('Contraseña incorrecta');
       }
@@ -159,6 +210,42 @@ function App() {
 
   if (loading) return <div className="app"><div className="loading">Cargando regalos...</div></div>;
   if (error) return <div className="app"><div className="error">Error: {error}</div></div>;
+  
+  if (siteHidden && !isAdmin) {
+    return (
+      <div className="app">
+        <header className="header">
+          <h1>🎁 Apartment Shower</h1>
+          <p>Lista de Regalos</p>
+          <button className="admin-link" onClick={() => setShowAdminLogin(true)}>Admin</button>
+        </header>
+        <div className="hidden-message">
+          <span>🚧</span>
+          <p>Estamos preparando algo especial para ti. ¡Vuelve pronto!</p>
+        </div>
+        
+        {showAdminLogin && (
+          <div className="modal-overlay" onClick={() => setShowAdminLogin(false)}>
+            <div className="modal" onClick={e => e.stopPropagation()}>
+              <h2>Acceso Admin</h2>
+              <input
+                type="password"
+                placeholder="Contraseña"
+                value={adminPassword}
+                onChange={e => setAdminPassword(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleAdminLogin()}
+                autoFocus
+              />
+              <div className="modal-actions">
+                <button className="btn btn-secondary" onClick={() => setShowAdminLogin(false)}>Cancelar</button>
+                <button className="btn btn-primary" onClick={handleAdminLogin}>Entrar</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="app">
@@ -182,6 +269,12 @@ function App() {
       {isAdmin && (
         <div className="admin-bar">
           <button className="btn btn-primary" onClick={openAddForm}>+ Agregar Regalo</button>
+          <button 
+            className={`btn ${siteVisible ? 'btn-secondary' : 'btn-warning'}`} 
+            onClick={toggleVisibility}
+          >
+            {siteVisible ? '👁 Ocultar Sitio' : '👁‍🗨 Mostrar Sitio'}
+          </button>
           <button className="btn btn-secondary" onClick={handleLogout}>Salir</button>
         </div>
       )}

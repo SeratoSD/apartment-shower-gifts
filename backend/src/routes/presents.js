@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getPresents, getPresentById, markAsBought, addPresent, deletePresent, releasePresent, updatePresent } = require('../data/presentsStore');
+const { getPresents, getPresentById, markAsBought, addPresent, deletePresent, releasePresent, updatePresent, getSiteVisible, setSiteVisible } = require('../data/presentsStore');
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 
@@ -15,8 +15,15 @@ function requireAdmin(req, res, next) {
 // Get all presents
 router.get('/', async (req, res) => {
   try {
+    const isAdmin = req.headers['x-admin-password'] === ADMIN_PASSWORD;
+    const siteVisible = await getSiteVisible();
+    
+    if (!siteVisible && !isAdmin) {
+      return res.json({ hidden: true, presents: [] });
+    }
+    
     const presents = await getPresents();
-    res.json(presents);
+    res.json({ hidden: false, presents });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -102,6 +109,27 @@ router.post('/admin/verify', (req, res) => {
     res.json({ valid: true });
   } else {
     res.status(401).json({ valid: false });
+  }
+});
+
+// Get site visibility
+router.get('/admin/visibility', requireAdmin, async (req, res) => {
+  try {
+    const visible = await getSiteVisible();
+    res.json({ visible });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Set site visibility
+router.post('/admin/visibility', requireAdmin, async (req, res) => {
+  try {
+    const { visible } = req.body;
+    await setSiteVisible(visible);
+    res.json({ visible });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
