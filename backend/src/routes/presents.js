@@ -13,64 +13,74 @@ function requireAdmin(req, res, next) {
 }
 
 // Get all presents
-router.get('/', (req, res) => {
-  const presents = getPresents();
-  res.json(presents);
+router.get('/', async (req, res) => {
+  try {
+    const presents = await getPresents();
+    res.json(presents);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get single present
-router.get('/:id', (req, res) => {
-  const present = getPresentById(req.params.id);
-  if (!present) {
-    return res.status(404).json({ error: 'Present not found' });
+router.get('/:id', async (req, res) => {
+  try {
+    const present = await getPresentById(req.params.id);
+    if (!present) return res.status(404).json({ error: 'Present not found' });
+    res.json(present);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  res.json(present);
 });
 
 // Mark present as bought
-router.post('/:id/buy', (req, res) => {
-  const { buyerName } = req.body;
-  if (!buyerName) {
-    return res.status(400).json({ error: 'Buyer name is required' });
+router.post('/:id/buy', async (req, res) => {
+  try {
+    const { buyerName } = req.body;
+    if (!buyerName) return res.status(400).json({ error: 'Buyer name is required' });
+    
+    const present = await markAsBought(req.params.id, buyerName);
+    if (!present) return res.status(404).json({ error: 'Present not found' });
+    if (present.error) return res.status(400).json({ error: present.error });
+    res.json(present);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  
-  const present = markAsBought(req.params.id, buyerName);
-  if (!present) {
-    return res.status(404).json({ error: 'Present not found' });
-  }
-  if (present.error) {
-    return res.status(400).json({ error: present.error });
-  }
-  res.json(present);
 });
 
 // Admin: Add new present
-router.post('/', requireAdmin, (req, res) => {
-  const { name, description, price, photo, url } = req.body;
-  if (!name || !price) {
-    return res.status(400).json({ error: 'Name and price are required' });
+router.post('/', requireAdmin, async (req, res) => {
+  try {
+    const { name, description, price, photo, url } = req.body;
+    if (!name || !price) return res.status(400).json({ error: 'Name and price are required' });
+    const present = await addPresent({ name, description, price, photo, url });
+    res.status(201).json(present);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  const present = addPresent({ name, description, price, photo, url });
-  res.status(201).json(present);
 });
 
 // Admin: Update present
-router.put('/:id', requireAdmin, (req, res) => {
-  const { name, description, price, photo, url } = req.body;
-  const present = updatePresent(req.params.id, { name, description, price, photo, url });
-  if (!present) {
-    return res.status(404).json({ error: 'Present not found' });
+router.put('/:id', requireAdmin, async (req, res) => {
+  try {
+    const { name, description, price, photo, url } = req.body;
+    const present = await updatePresent(req.params.id, { name, description, price, photo, url });
+    if (!present) return res.status(404).json({ error: 'Present not found' });
+    res.json(present);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  res.json(present);
 });
 
 // Admin: Delete present
-router.delete('/:id', requireAdmin, (req, res) => {
-  const deleted = deletePresent(req.params.id);
-  if (!deleted) {
-    return res.status(404).json({ error: 'Present not found' });
+router.delete('/:id', requireAdmin, async (req, res) => {
+  try {
+    const deleted = await deletePresent(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Present not found' });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  res.json({ success: true });
 });
 
 // Verify admin password

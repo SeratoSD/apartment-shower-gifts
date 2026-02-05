@@ -1,88 +1,49 @@
-const fs = require('fs');
-const path = require('path');
+const Present = require('../models/Present');
 
-const dataPath = path.join(__dirname, 'presents.json');
-
-function loadPresents() {
-  if (!fs.existsSync(dataPath)) {
-    return [];
-  }
-  const data = fs.readFileSync(dataPath, 'utf-8');
-  return JSON.parse(data);
+async function getPresents() {
+  return Present.find().sort({ createdAt: -1 });
 }
 
-function savePresents(presents) {
-  fs.writeFileSync(dataPath, JSON.stringify(presents, null, 2));
+async function getPresentById(id) {
+  return Present.findById(id);
 }
 
-function getPresents() {
-  return loadPresents();
-}
-
-function getPresentById(id) {
-  const presents = loadPresents();
-  return presents.find(p => p.id === id);
-}
-
-function markAsBought(id, buyerName) {
-  const presents = loadPresents();
-  const index = presents.findIndex(p => p.id === id);
+async function markAsBought(id, buyerName) {
+  const present = await Present.findById(id);
+  if (!present) return null;
+  if (present.bought) return { error: 'This present has already been bought' };
   
-  if (index === -1) return null;
-  
-  if (presents[index].bought) {
-    return { error: 'This present has already been bought' };
-  }
-  
-  presents[index].bought = true;
-  presents[index].buyerName = buyerName;
-  presents[index].boughtAt = new Date().toISOString();
-  
-  savePresents(presents);
-  return presents[index];
+  present.bought = true;
+  present.buyerName = buyerName;
+  present.boughtAt = new Date();
+  await present.save();
+  return present;
 }
 
-function addPresent(presentData) {
-  const presents = loadPresents();
-  const newPresent = {
-    id: String(Date.now()),
-    name: presentData.name,
-    description: presentData.description,
-    price: parseFloat(presentData.price),
-    photo: presentData.photo,
-    url: presentData.url,
-    bought: false
-  };
-  presents.push(newPresent);
-  savePresents(presents);
-  return newPresent;
+async function addPresent(data) {
+  const present = new Present({
+    name: data.name,
+    description: data.description,
+    price: parseFloat(data.price),
+    photo: data.photo,
+    url: data.url
+  });
+  await present.save();
+  return present;
 }
 
-function deletePresent(id) {
-  const presents = loadPresents();
-  const index = presents.findIndex(p => p.id === id);
-  if (index === -1) return null;
-  const deleted = presents.splice(index, 1)[0];
-  savePresents(presents);
-  return deleted;
+async function deletePresent(id) {
+  return Present.findByIdAndDelete(id);
 }
 
-function updatePresent(id, updates) {
-  const presents = loadPresents();
-  const index = presents.findIndex(p => p.id === id);
-  if (index === -1) return null;
-  
-  presents[index] = {
-    ...presents[index],
-    name: updates.name || presents[index].name,
-    description: updates.description ?? presents[index].description,
-    price: updates.price ? parseFloat(updates.price) : presents[index].price,
-    photo: updates.photo ?? presents[index].photo,
-    url: updates.url ?? presents[index].url
-  };
-  
-  savePresents(presents);
-  return presents[index];
+async function updatePresent(id, updates) {
+  return Present.findByIdAndUpdate(id, {
+    name: updates.name,
+    description: updates.description,
+    price: updates.price ? parseFloat(updates.price) : undefined,
+    photo: updates.photo,
+    url: updates.url
+  }, { new: true });
 }
 
 module.exports = { getPresents, getPresentById, markAsBought, addPresent, deletePresent, updatePresent };

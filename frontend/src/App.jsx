@@ -41,7 +41,7 @@ function App() {
     if (!buyerName.trim()) return;
     setBuying(true);
     try {
-      const res = await fetch(`${API_URL}/${buyModal.id}/buy`, {
+      const res = await fetch(`${API_URL}/${buyModal._id}/buy`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ buyerName: buyerName.trim() })
@@ -109,7 +109,7 @@ function App() {
     const isEditing = !!editingGift;
     
     try {
-      const res = await fetch(isEditing ? `${API_URL}/${editingGift.id}` : API_URL, {
+      const res = await fetch(isEditing ? `${API_URL}/${editingGift._id}` : API_URL, {
         method: isEditing ? 'PUT' : 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -173,7 +173,7 @@ function App() {
 
       <div className="presents-grid">
         {presents.map(present => (
-          <div key={present.id} className={`present-card ${present.bought ? 'bought' : ''}`}>
+          <div key={present._id} className={`present-card ${present.bought ? 'bought' : ''}`}>
             <img src={present.photo} alt={present.name} className="present-image" />
             <div className="present-content">
               <h3 className="present-name">{present.name}</h3>
@@ -198,7 +198,7 @@ function App() {
               {isAdmin && (
                 <div className="admin-actions">
                   <button className="btn-edit" onClick={() => openEditForm(present)}>✏️ Editar</button>
-                  <button className="btn-delete" onClick={() => handleDelete(present.id)}>🗑 Eliminar</button>
+                  <button className="btn-delete" onClick={() => handleDelete(present._id)}>🗑 Eliminar</button>
                 </div>
               )}
             </div>
