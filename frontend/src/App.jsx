@@ -19,6 +19,8 @@ function App() {
   const [giftForm, setGiftForm] = useState({ name: '', description: '', price: '', photo: '', url: '' });
   const [siteHidden, setSiteHidden] = useState(false);
   const [siteVisible, setSiteVisible] = useState(true);
+  const [sortBy, setSortBy] = useState('default');
+  const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
 
   useEffect(() => {
     fetchPresents();
@@ -209,6 +211,22 @@ function App() {
     }
   }
 
+  function getFilteredPresents() {
+    let filtered = [...presents];
+    
+    if (showOnlyAvailable) {
+      filtered = filtered.filter(p => !p.bought);
+    }
+    
+    if (sortBy === 'price-asc') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price-desc') {
+      filtered.sort((a, b) => b.price - a.price);
+    }
+    
+    return filtered;
+  }
+
   if (loading) return <div className="app"><div className="loading">Cargando regalos...</div></div>;
   if (error) return <div className="app"><div className="error">Error: {error}</div></div>;
   
@@ -280,8 +298,26 @@ function App() {
         </div>
       )}
 
+      {!isAdmin && (
+        <div className="filter-bar">
+          <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="filter-select">
+            <option value="default">Ordenar por</option>
+            <option value="price-asc">Precio: menor a mayor</option>
+            <option value="price-desc">Precio: mayor a menor</option>
+          </select>
+          <label className="filter-checkbox">
+            <input 
+              type="checkbox" 
+              checked={showOnlyAvailable} 
+              onChange={e => setShowOnlyAvailable(e.target.checked)} 
+            />
+            Solo disponibles
+          </label>
+        </div>
+      )}
+
       <div className="presents-grid">
-        {presents.map(present => (
+        {getFilteredPresents().map(present => (
           <div key={present._id} className={`present-card ${present.bought ? 'bought' : ''}`}>
             <img src={present.photo} alt={present.name} className="present-image" />
             <div className="present-content">
