@@ -142,6 +142,21 @@ function App() {
     }
   }
 
+  async function handleRelease(id) {
+    if (!confirm('¿Liberar este regalo?')) return;
+    const password = sessionStorage.getItem('adminPassword');
+    try {
+      const res = await fetch(`${API_URL}/${id}/release`, {
+        method: 'POST',
+        headers: { 'x-admin-password': password }
+      });
+      if (!res.ok) throw new Error('Failed to release');
+      await fetchPresents();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
   if (loading) return <div className="app"><div className="loading">Cargando regalos...</div></div>;
   if (error) return <div className="app"><div className="error">Error: {error}</div></div>;
 
@@ -181,7 +196,12 @@ function App() {
               <p className="present-price">${present.price.toFixed(2)}</p>
               
               {present.bought ? (
-                <div className="bought-badge">✓ Comprado por {present.buyerName}</div>
+                <div className="bought-badge">
+                  ✓ Comprado por {present.buyerName}
+                  {isAdmin && (
+                    <button className="btn-release" onClick={() => handleRelease(present._id)}>Liberar</button>
+                  )}
+                </div>
               ) : (
                 <div className="present-actions">
                   {!isAdmin && (

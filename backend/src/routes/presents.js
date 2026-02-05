@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getPresents, getPresentById, markAsBought, addPresent, deletePresent, updatePresent } = require('../data/presentsStore');
+const { getPresents, getPresentById, markAsBought, addPresent, deletePresent, releasePresent, updatePresent } = require('../data/presentsStore');
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 
@@ -78,6 +78,18 @@ router.delete('/:id', requireAdmin, async (req, res) => {
     const deleted = await deletePresent(req.params.id);
     if (!deleted) return res.status(404).json({ error: 'Present not found' });
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin: Release bought present
+router.post('/:id/release', requireAdmin, async (req, res) => {
+  try {
+    const present = await releasePresent(req.params.id);
+    if (!present) return res.status(404).json({ error: 'Present not found' });
+    if (present.error) return res.status(400).json({ error: present.error });
+    res.json(present);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

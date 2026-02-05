@@ -230,6 +230,26 @@ body {
   border-radius: 8px;
   font-size: 0.75rem;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-release {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.5);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-release:hover {
+  background: rgba(255,255,255,0.3);
 }
 
 .modal-overlay {

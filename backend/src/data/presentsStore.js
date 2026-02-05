@@ -36,6 +36,18 @@ async function deletePresent(id) {
   return Present.findByIdAndDelete(id);
 }
 
+async function releasePresent(id) {
+  const present = await Present.findById(id);
+  if (!present) return null;
+  if (!present.bought) return { error: 'This present is not bought' };
+  
+  present.bought = false;
+  present.buyerName = undefined;
+  present.boughtAt = undefined;
+  await present.save();
+  return present;
+}
+
 async function updatePresent(id, updates) {
   return Present.findByIdAndUpdate(id, {
     name: updates.name,
@@ -46,4 +58,4 @@ async function updatePresent(id, updates) {
   }, { new: true });
 }
 
-module.exports = { getPresents, getPresentById, markAsBought, addPresent, deletePresent, updatePresent };
+module.exports = { getPresents, getPresentById, markAsBought, addPresent, deletePresent, releasePresent, updatePresent };
