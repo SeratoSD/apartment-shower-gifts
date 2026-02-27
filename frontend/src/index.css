@@ -20,7 +20,7 @@ body {
 .header {
   text-align: center;
   padding: 24px 0;
-  background: linear-gradient(135deg, #dcc4a0 0%, #c9a87c 100%);
+  background: linear-gradient(135deg, #e8d8c0 0%, #c9a87c 100%);
   color: white;
   border-radius: 16px;
   margin-bottom: 24px;
@@ -468,7 +468,7 @@ body {
 .welcome-card {
   padding: 16px 20px;
   text-align: justify;
-  background: linear-gradient(135deg, #dcc4a0 0%, #c9a87c 100%);
+  background: linear-gradient(135deg, #e8d8c0 0%, #c9a87c 100%);
   color: white;
 }
 
