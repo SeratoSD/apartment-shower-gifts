@@ -2,10 +2,19 @@ import { useState, useEffect, useCallback } from 'react';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api/presents';
 
-// Auto-import all images from src/assets/carousel/ — just drop files there
-const carouselModules = import.meta.glob('/src/assets/carousel/*.{png,jpg,jpeg,webp,gif,avif}', { eager: true, import: 'default' });
+// Auto-import all images from src/assets/carousel/, optimized to webp at 600px wide
+const carouselModules = import.meta.glob(
+  '/src/assets/carousel/*.{png,jpg,jpeg,webp,gif,avif}',
+  { eager: true, query: { w: 600, format: 'webp', quality: 75 }, import: 'default' }
+);
 const CAROUSEL_IMAGES = Object.values(carouselModules);
 const SLIDE_INTERVAL = 4000;
+
+// Preload all carousel images into browser cache
+CAROUSEL_IMAGES.forEach(src => {
+  const img = new Image();
+  img.src = src;
+});
 
 function BackgroundCarousel({ images }) {
   const [groupIndex, setGroupIndex] = useState(0);
