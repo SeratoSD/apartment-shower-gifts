@@ -1,6 +1,64 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const API_URL = import.meta.env.VITE_API_URL || '/api/presents';
+
+// Auto-import all images from src/assets/carousel/ — just drop files there
+const carouselModules = import.meta.glob('/src/assets/carousel/*.{png,jpg,jpeg,webp,gif,avif}', { eager: true, import: 'default' });
+const CAROUSEL_IMAGES = Object.values(carouselModules);
+const SLIDE_INTERVAL = 4000;
+
+function BackgroundCarousel({ images }) {
+  const [groupIndex, setGroupIndex] = useState(0);
+  const [sliding, setSliding] = useState(false);
+
+  // Build groups of 3 images
+  const groups = [];
+  for (let i = 0; i < images.length; i += 3) {
+    groups.push(images.slice(i, i + 3));
+  }
+  // Pad last group if needed
+  if (groups.length > 0) {
+    const last = groups[groups.length - 1];
+    while (last.length < 3) last.push(images[last.length % images.length]);
+  }
+
+  const goNext = useCallback(() => {
+    if (groups.length <= 1) return;
+    setSliding(true);
+    setTimeout(() => {
+      setGroupIndex(prev => (prev + 1) % groups.length);
+      setSliding(false);
+    }, 600);
+  }, [groups.length]);
+
+  useEffect(() => {
+    if (groups.length <= 1) return;
+    const timer = setInterval(goNext, SLIDE_INTERVAL);
+    return () => clearInterval(timer);
+  }, [goNext, groups.length]);
+
+  if (groups.length === 0) return null;
+
+  const currentGroup = groups[groupIndex];
+  const nextGroup = groups[(groupIndex + 1) % groups.length];
+
+  return (
+    <div className="carousel-container">
+      <div className={`carousel-track${sliding ? ' sliding' : ''}`}>
+        <div className="carousel-group">
+          {currentGroup.map((src, i) => (
+            <div key={i} className="carousel-slide" style={{ backgroundImage: `url(${src})` }} />
+          ))}
+        </div>
+        <div className="carousel-group">
+          {nextGroup.map((src, i) => (
+            <div key={i} className="carousel-slide" style={{ backgroundImage: `url(${src})` }} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function App() {
   const [presents, setPresents] = useState([]);
@@ -234,7 +292,8 @@ function App() {
     return (
       <div className="app">
         <header className="header">
-          <h1>🎁 Apartment Shower</h1>
+          <h1>🧔🏻‍♂️ Sergio & Caro 👩🏻</h1>
+          <h2>Apartment Shower 🎁</h2>
           <p>Lista de Regalos</p>
           <button className="admin-link" onClick={() => setShowAdminLogin(true)}>Admin</button>
         </header>
@@ -269,7 +328,8 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>🎁 Apartment Shower</h1>
+        <h1>🧔🏻‍♂️ Sergio & Caro 👩🏻</h1>
+        <h2>Apartment Shower 🎁</h2>
         <p>Lista de Regalos</p>
         {isAdmin ? (
           <div className="admin-badge">Modo Admin</div>
@@ -278,12 +338,25 @@ function App() {
         )}
       </header>
 
-      <p className="welcome-text">
-        <span className="welcome-highlight">Hey!</span> Si estás aquí es porque te queremos mucho y queremos que seas parte de nuestra nueva casita. 
-        Abajo encontrarás algunos presents que nos harán muy felices y que usaremos todos los días en nuestro nuevo hogar. 
-        Echa un ojito, siéntete como en casa y escoge el que prefieras (no es obligatorio, lo importante es tu presencia, te esperamos para celebrar!). <span className="welcome-highlight">Recuerda marcar como comprado</span> el ítem que elegiste (así los demás lo sabrán).
-        Gracias por tomarte el tiempo de estar aquí, <span className="welcome-highlight">nos vemos el 28 de Marzo!</span> :)
-      </p>
+      <div className="welcome-section">
+        <div className="carousel-wrapper">
+          <BackgroundCarousel images={CAROUSEL_IMAGES} />
+          <div className="carousel-dots">
+            {Array.from({ length: Math.ceil(CAROUSEL_IMAGES.length / 3) }).map((_, i) => (
+              <span key={i} className="carousel-dot" />
+            ))}
+          </div>
+        </div>
+        <div className="welcome-card">
+          <span className="welcome-icon">💌</span>
+          <p className="welcome-content">
+            <span className="welcome-highlight">Hey!</span> Si estás aquí es porque te queremos mucho y queremos que seas parte de nuestra nueva casita. 
+            Abajo encontrarás algunos presents que nos harán muy felices y que usaremos todos los días en nuestro nuevo hogar. 
+            Echa un ojito, siéntete como en casa y escoge el que prefieras (no es obligatorio, lo importante es tu presencia, te esperamos para celebrar!). <span className="welcome-highlight">Recuerda marcar como comprado</span> el ítem que elegiste (así los demás lo sabrán).
+            Gracias por tomarte el tiempo de estar aquí, <span className="welcome-highlight">nos vemos el 28 de Marzo!</span> :)
+          </p>
+        </div>
+      </div>
 
       {isAdmin && (
         <div className="admin-bar">
