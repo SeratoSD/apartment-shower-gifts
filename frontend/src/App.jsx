@@ -362,7 +362,7 @@ function App() {
             Si estás aquí es porque te queremos mucho y queremos que seas parte de nuestra nueva casita. 
             Abajo encontrarás algunos presents que nos harán muy felices y que usaremos todos los días en nuestro nuevo hogar. 
             Echa un ojito, siéntete como en casa y escoge el que prefieras (no es obligatorio, lo importante es tu presencia, te esperamos para celebrar!). <span className="welcome-highlight">Recuerda marcar como comprado</span> el ítem que elegiste (así los demás lo sabrán).
-            Gracias por tomarte el tiempo de estar aquí, <span className="welcome-highlight">nos vemos el 28 de Marzo!</span> :)
+            Gracias por tomarte el tiempo de estar aquí :)
           </p>
         </div>
       </div>
