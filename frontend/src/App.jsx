@@ -86,7 +86,7 @@ function App() {
   const [giftForm, setGiftForm] = useState({ name: '', description: '', price: '', photo: '', url: '' });
   const [siteHidden, setSiteHidden] = useState(false);
   const [siteVisible, setSiteVisible] = useState(true);
-  const [sortBy, setSortBy] = useState('default');
+  const [sortBy, setSortBy] = useState('price-desc');
   const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
 
   useEffect(() => {
