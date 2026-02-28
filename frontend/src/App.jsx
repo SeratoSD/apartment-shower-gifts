@@ -415,17 +415,15 @@ function App() {
                   )}
                 </div>
               ) : (
-                <div className="present-actions">
-                  {!isAdmin && (
-                    <button className="btn btn-primary" onClick={() => setBuyModal(present)}>
-                      Lo Compro!
-                    </button>
-                  )}
-                  <a href={present.url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
-                    Ver
-                  </a>
-                </div>
+                !isAdmin && (
+                  <button className="btn btn-primary" onClick={() => setBuyModal(present)}>
+                    Lo Compro!
+                  </button>
+                )
               )}
+              <a href={present.url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
+                Ver
+              </a>
               
               {isAdmin && (
                 <div className="admin-actions">
